@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 public class Net {
   private static Pattern pattern = initializePattern();
 
+  //根据正则表达式抽取出所有的Url链接
   public static Set<WebURL> extractUrls(String input) {
     Set<WebURL> extractedUrls = new HashSet<>();
 

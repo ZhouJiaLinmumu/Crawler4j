@@ -50,6 +50,7 @@ public class Util {
 		}
 	}
 
+	//byte数组转化为Int
 	public static int byteArray2Int(byte[] b) {
 		int value = 0;
 		for (int i = 0; i < 4; i++) {
@@ -59,9 +60,9 @@ public class Util {
 		return value;
 	}
 
+	//byte数组转化为long
 	public static long byteArray2Long(byte[] b) {
-		//int value = 0;
-		long value = 0;
+		int value = 0; //long value = 0;
 		for (int i = 0; i < 8; i++) {
 			int shift = (8 - 1 - i) * 8;
 			value += (b[i] & 0x000000FF) << shift;
@@ -69,7 +70,7 @@ public class Util {
 		return value;
 	}
 
-	// 验证Http协议头中的contentType
+	// 验证Http协议头中的contentType，是否为二进制数据，如image,audio等
 	public static boolean hasBinaryContent(String contentType) {
 		String typeStr = contentType != null ? contentType.toLowerCase() : "";
 
@@ -77,6 +78,7 @@ public class Util {
 				|| typeStr.contains("application");
 	}
 
+	// 验证Http协议头中的contentType，是否为文本制数据
 	public static boolean hasPlainTextContent(String contentType) {
 		String typeStr = contentType != null ? contentType.toLowerCase() : "";
 

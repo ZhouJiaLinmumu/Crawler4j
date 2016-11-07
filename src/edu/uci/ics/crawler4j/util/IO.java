@@ -35,6 +35,7 @@ public class IO {
     return deleteFolderContents(folder) && folder.delete();
   }
 
+  // 使用递归的方法删除一个目录及其下的所有子目录及文件
   public static boolean deleteFolderContents(File folder) {
     logger.debug("Deleting content of: " + folder.getAbsolutePath());
     File[] files = folder.listFiles();
