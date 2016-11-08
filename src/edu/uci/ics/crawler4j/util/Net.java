@@ -7,22 +7,20 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by Avi Hayun on 9/22/2014.
- * Net related Utils
- */
 public class Net {
   private static Pattern pattern = initializePattern();
 
-  //根据正则表达式抽取出所有的Url链接
+  // 根据正则表达式抽取出所有的Url链接
   public static Set<WebURL> extractUrls(String input) {
     Set<WebURL> extractedUrls = new HashSet<>();
 
     if (input != null) {
       Matcher matcher = pattern.matcher(input);
+      // 依次获取满足过滤条件的链接
       while (matcher.find()) {
         WebURL webURL = new WebURL();
         String urlStr = matcher.group();
+        // 加上协议名，便于网络访问
         if (!urlStr.startsWith("http"))
           urlStr = "http://" + urlStr;
 
@@ -30,7 +28,6 @@ public class Net {
         extractedUrls.add(webURL);
       }
     }
-
     return extractedUrls;
   }
 

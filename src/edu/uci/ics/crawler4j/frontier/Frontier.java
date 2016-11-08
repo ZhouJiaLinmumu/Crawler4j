@@ -61,7 +61,8 @@ public class Frontier extends Configurable {
         if (numPreviouslyInProcessPages > 0) {
           logger.info("Rescheduling {} URLs from previous crawl.", numPreviouslyInProcessPages);
           scheduledPages -= numPreviouslyInProcessPages;
-
+          // 从数据库中读取数据进行调度
+          // 页面分为Scheduled和Processed页面，Scheduled分为正在抓取的(inProcessPages)和等待抓取的。
           List<WebURL> urls = inProcessPages.get(100);
           while (urls.size() > 0) {
             scheduleAll(urls);
@@ -71,7 +72,7 @@ public class Frontier extends Configurable {
         }
       } else {
         inProcessPages = null;
-        scheduledPages = 0;
+        scheduledPages = 0;	//不需要resume
       }
     } catch (DatabaseException e) {
       logger.error("Error while initializing the Frontier", e);
@@ -94,7 +95,7 @@ public class Frontier extends Configurable {
         } catch (DatabaseException e) {
           logger.error("Error while putting the url in the work queue", e);
         }
-      }
+     }
       if (newScheduledPage > 0) {
         scheduledPages += newScheduledPage;
         counters.increment(Counters.ReservedCounterNames.SCHEDULED_PAGES, newScheduledPage);
@@ -120,6 +121,7 @@ public class Frontier extends Configurable {
     }
   }
 
+  //获取接下来的max条URLs,存到result中
   public void getNextURLs(int max, List<WebURL> result) {
     while (true) {
       synchronized (mutex) {
@@ -129,6 +131,7 @@ public class Frontier extends Configurable {
         try {
           List<WebURL> curResults = workQueues.get(max);
           workQueues.delete(curResults.size());
+          //保持到inPreocessPages数据库中
           if (inProcessPages != null) {
             for (WebURL curPage : curResults) {
               inProcessPages.put(curPage);

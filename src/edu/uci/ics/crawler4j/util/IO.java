@@ -1,37 +1,17 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package edu.uci.ics.crawler4j.util;
 
-import com.google.common.io.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.io.File;
 
-import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 
-/**
- * @author Yasser Ganjisaffar [lastname at gmail dot com]
- */
 public class IO {
+  
+  //日志记录对象	
   private static Logger logger = LoggerFactory.getLogger(IO.class);
 
   public static boolean deleteFolder(File folder) {
+	// 删除目录，并判断执行删除操作后目录是否存在
     return deleteFolderContents(folder) && folder.delete();
   }
 
@@ -40,16 +20,18 @@ public class IO {
     logger.debug("Deleting content of: " + folder.getAbsolutePath());
     File[] files = folder.listFiles();
     for (File file : files) {
+      // 如果是文件，则直接删除	
       if (file.isFile()) {
         if (!file.delete()) {
           return false;
         }
-      } else {
+      } else {	// 如果是目录，则对目录递归执行deleteFolderContents操作
         if (!deleteFolder(file)) {
           return false;
         }
       }
     }
+    // 删除完毕，返回true
     return true;
   }
 }

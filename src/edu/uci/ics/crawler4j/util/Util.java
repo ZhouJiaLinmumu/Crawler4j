@@ -27,7 +27,7 @@ public class Util {
 		byte[] array = new byte[8];
 		int i, shift;
 		for (i = 0, shift = 56; i < 8; i++, shift -= 8) {
-			array[i] = (byte) (0xFF & (l >> shift));
+			array[i] = (byte) (0xFF & (l >>> shift));
 		}
 		return array;
 	}
@@ -62,10 +62,10 @@ public class Util {
 
 	//byte数组转化为long
 	public static long byteArray2Long(byte[] b) {
-		int value = 0; //long value = 0;
+		long value = 0; // 是否应该是 long value = 0;
 		for (int i = 0; i < 8; i++) {
 			int shift = (8 - 1 - i) * 8;
-			value += (b[i] & 0x000000FF) << shift;
+			value += ((long)b[i] & 0x000000FF) << shift;
 		}
 		return value;
 	}
