@@ -28,94 +28,111 @@ public class CrawlConfig {
    * The folder which will be used by crawler for storing the intermediate
    * crawl data. The content of this folder should not be modified manually.
    */
+	// 用于存放爬虫中间信息的文件目录，里面的内容最好不要认为更改
   private String crawlStorageFolder;
 
   /**
    * If this feature is enabled, you would be able to resume a previously
    * stopped/crashed crawl. However, it makes crawling slightly slower
    */
+  // 是否允许恢复之前停止或者崩溃的爬虫。这会使得爬虫效率略微降低
   private boolean resumableCrawling = false;
 
   /**
    * Maximum depth of crawling For unlimited depth this parameter should be
    * set to -1
    */
+  // 爬虫的最大爬取深度。-1表示爬取深度无限制
   private int maxDepthOfCrawling = -1;
 
   /**
    * Maximum number of pages to fetch For unlimited number of pages, this
    * parameter should be set to -1
    */
+  // 最大爬取的页面数，-1表示爬取页面数无限制
   private int maxPagesToFetch = -1;
 
   /**
    * user-agent string that is used for representing your crawler to web
    * servers. See http://en.wikipedia.org/wiki/User_agent for more details
    */
+  // 爬虫的user-agent
   private String userAgentString = "crawler4j (http://code.google.com/p/crawler4j/)";
 
   /**
    * Politeness delay in milliseconds (delay between sending two requests to
    * the same host).
    */
+  // 对同一个host的两次request之间的间隔时间（ms），避免过快爬取
   private int politenessDelay = 200;
 
   /**
    * Should we also crawl https pages?
    */
+  // 是否爬取https页面
   private boolean includeHttpsPages = true;
 
   /**
    * Should we fetch binary content such as images, audio, ...?
    */
+  // 是否爬取二进制数据的页面，例如image,audio
   private boolean includeBinaryContentInCrawling = false;
 
   /**
    * Maximum Connections per host
    */
+  // 对于一个host的最大同时连接
   private int maxConnectionsPerHost = 100;
 
   /**
    * Maximum total connections
    */
+  // 总的最大连接数
   private int maxTotalConnections = 100;
 
   /**
    * Socket timeout in milliseconds
    */
+  // socket超时时间（ms）
   private int socketTimeout = 20000;
 
   /**
    * Connection timeout in milliseconds
    */
+  // 连接超时时间(ms)
   private int connectionTimeout = 30000;
 
   /**
    * Max number of outgoing links which are processed from a page
    */
+  // 一个页面最多处理多少个外链
   private int maxOutgoingLinksToFollow = 5000;
 
   /**
    * Max allowed size of a page. Pages larger than this size will not be
    * fetched.
    */
-  private int maxDownloadSize = 1048576;
+  // 访问页面的最大大小，超过这个大小的页面一律丢弃
+  private int maxDownloadSize = 1048576; // 128 x 1024 x 8 = 128KB
 
   /**
    * Should we follow redirects?
    */
+  // 是否跟踪网页重定向
   private boolean followRedirects = true;
 
   /**
    * If crawler should run behind a proxy, this parameter can be used for
    * specifying the proxy host.
    */
+  // 代理主机
   private String proxyHost = null;
 
   /**
    * If crawler should run behind a proxy, this parameter can be used for
    * specifying the proxy port.
    */
+  // 代理端口
   private int proxyPort = 80;
 
   /**
@@ -123,6 +140,7 @@ public class CrawlConfig {
    * authentication in proxy, this parameter can be used for specifying the
    * username.
    */
+  // 代理用户名
   private String proxyUsername = null;
 
   /**
@@ -130,11 +148,13 @@ public class CrawlConfig {
    * authentication in proxy, this parameter can be used for specifying the
    * password.
    */
+  // 代理密码
   private String proxyPassword = null;
 
   /**
   * List of possible authentications needed by crawler
   */
+  // 爬虫需要的认证信息集合
   private List<AuthInfo> authInfos;
 
   public CrawlConfig() {
@@ -145,6 +165,7 @@ public class CrawlConfig {
    *
    * @throws Exception on Validation fail
    */
+  // 配置信息有效性验证
   public void validate() throws Exception {
     if (crawlStorageFolder == null) {
       throw new Exception("Crawl storage folder is not set in the CrawlConfig.");
