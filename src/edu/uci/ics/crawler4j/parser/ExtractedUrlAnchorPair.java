@@ -1,6 +1,6 @@
 package edu.uci.ics.crawler4j.parser;
 
-// 将html文本中的超链接标签，拆分为href,anchor,tag各部分
+// 将html文本中的超链接标签，拆分为href（超链接）,anchor（锚文本）,tag（HTML标签）各部分
 public class ExtractedUrlAnchorPair {
 
   private String href;

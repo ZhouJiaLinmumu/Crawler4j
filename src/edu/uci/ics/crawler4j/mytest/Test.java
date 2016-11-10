@@ -1,8 +1,5 @@
 package edu.uci.ics.crawler4j.mytest;
 
-import org.mp4parser.aspectj.internal.lang.annotation.ajcDeclareAnnotation;
-
-import com.beust.jcommander.Strings;
 
 import edu.uci.ics.crawler4j.url.UrlResolver;
 import edu.uci.ics.crawler4j.url.WebURL;
