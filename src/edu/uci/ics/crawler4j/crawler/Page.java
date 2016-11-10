@@ -1,20 +1,3 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package edu.uci.ics.crawler4j.crawler;
 
 import java.nio.charset.Charset;
@@ -32,64 +15,76 @@ import edu.uci.ics.crawler4j.url.WebURL;
  *
  * @author Yasser Ganjisaffar [lastname at gmail dot com]
  */
+// 用来描述web页面的类
 public class Page {
 
   /**
    * The URL of this page.
    */
+  // 当前页面的url
   protected WebURL url;
 
   /**
   * Redirection flag
   */
+  // 当前页面是否重定向
   protected boolean redirect;
 
   /**
    * The URL to which this page will be redirected to
    */
+  // 重定向的url
   protected String redirectedToUrl;
 
   /**
   * Status of the page
   */
+  // 当前页面的状态码
   protected int statusCode;
 
   /**
    * The content of this page in binary format.
    */
+  // 二进制格式的页面内容
   protected byte[] contentData;
 
   /**
    * The ContentType of this page.
    * For example: "text/html; charset=UTF-8"
    */
+  // 当前页面的contentType
   protected String contentType;
 
   /**
    * The encoding of the content.
    * For example: "gzip"
    */
+  // 当前页面的编码方式
   protected String contentEncoding;
 
   /**
    * The charset of the content.
    * For example: "UTF-8"
    */
+  // 页面内容的字符集
   protected String contentCharset;
 
   /**
   * Language of the Content.
   */
+  // 页面内容的language
   private String language;
 
   /**
    * Headers which were present in the response of the fetch request
    */
+  // 当前页面response中的header集合
   protected Header[] fetchResponseHeaders;
 
   /**
    * The parsed data populated by parsers
    */
+  // 使用parser翻译过后的页面
   protected ParseData parseData;
 
 
@@ -103,6 +98,7 @@ public class Page {
    * @param entity HttpEntity
    * @throws Exception when load fails
    */
+  // 解析通过httpclient包收到的entity
   public void load(HttpEntity entity) throws Exception {
 
     contentType = null;

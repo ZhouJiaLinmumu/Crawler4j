@@ -4,7 +4,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 import java.util.Set;
 
-//抽象接口类
+//抽象接口
 public interface ParseData {
 
   //得到当前页面的所有外链
