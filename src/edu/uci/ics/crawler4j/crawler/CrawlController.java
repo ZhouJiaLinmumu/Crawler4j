@@ -78,6 +78,7 @@ public class CrawlController extends Configurable {
     super(config);
 
     config.validate();
+    // 创建存储中间文件的文件目录
     File folder = new File(config.getCrawlStorageFolder());
     if (!folder.exists()) {
       if (!folder.mkdirs()) {
@@ -94,6 +95,7 @@ public class CrawlController extends Configurable {
     envConfig.setTransactional(resumable);
     envConfig.setLocking(resumable);
 
+    // env文件存放路径
     File envHome = new File(config.getCrawlStorageFolder() + "/frontier");
     if (!envHome.exists()) {
       if (!envHome.mkdir()) {
@@ -103,7 +105,7 @@ public class CrawlController extends Configurable {
       }
     }
 
-    // envHome是爬虫环境变量的存储，resumable决定是否保存
+    // envHome是爬虫环境变量的存储，resumable决定是否保存目录下的文件内容
     if (!resumable) {	
       IO.deleteFolderContents(envHome);
       logger.info("Deleted contents of: " + envHome + " ( as you have configured resumable crawling to false )");

@@ -159,7 +159,7 @@ public class WorkQueues {
     return new DatabaseEntry(keyData);
   }
 
-  //插入WebURL记录
+  //插入WebURL记录到合适位置
   public void put(WebURL url) throws DatabaseException {
     DatabaseEntry value = new DatabaseEntry();
     webURLBinding.objectToEntry(url, value);
