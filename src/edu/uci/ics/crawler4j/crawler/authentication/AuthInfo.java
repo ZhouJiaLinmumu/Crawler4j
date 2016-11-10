@@ -12,6 +12,7 @@ import java.net.URL;
  * <br>
  * This class contains all of the mutual authentication data for all authentication types
  */
+// 用于登录验证的抽象类，主要包括form和base的authentication。
 public abstract class AuthInfo {
   public enum AuthenticationType {
     BASIC_AUTHENTICATION, FORM_AUTHENTICATION
