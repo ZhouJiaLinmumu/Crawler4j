@@ -18,12 +18,12 @@ public abstract class AuthInfo {
     BASIC_AUTHENTICATION, FORM_AUTHENTICATION
   }
 
-  protected AuthenticationType authenticationType;
-  protected MethodType httpMethod;
-  protected String protocol;
-  protected String host;
-  protected String loginTarget;
-  protected int port;
+  protected AuthenticationType authenticationType;	//验证类型
+  protected MethodType httpMethod;	// 包括MethodType.GET和MethodType.Post	
+  protected String protocol;		// 协议
+  protected String host;			// 主机域名
+  protected String loginTarget;		// path
+  protected int port;				// 端口
   protected String username;
   protected String password;
 

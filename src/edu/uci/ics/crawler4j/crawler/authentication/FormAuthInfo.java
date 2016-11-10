@@ -26,7 +26,8 @@ public class FormAuthInfo extends AuthInfo {
    * @throws MalformedURLException Make sure your URL is valid
    */
   public FormAuthInfo(String username, String password, String loginUrl, String usernameFormStr, String passwordFormStr) throws MalformedURLException {
-    super(AuthenticationType.FORM_AUTHENTICATION, MethodType.POST, loginUrl, username, password);
+    // 使用form表单,post方法进行登录验证
+	super(AuthenticationType.FORM_AUTHENTICATION, MethodType.POST, loginUrl, username, password);
 
     this.usernameFormStr = usernameFormStr;
     this.passwordFormStr = passwordFormStr;
