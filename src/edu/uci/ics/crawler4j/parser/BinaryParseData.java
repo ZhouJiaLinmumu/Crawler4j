@@ -1,20 +1,3 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package edu.uci.ics.crawler4j.parser;
 
 import java.io.ByteArrayInputStream;
@@ -34,6 +17,7 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import edu.uci.ics.crawler4j.url.WebURL;
+
 // Tika是一个内容分析工具，自带全面的parser工具类，
 // 能解析基本所有常见格式的文件，得到文件的metadata，content等内容，返回格式化信息
 import org.apache.tika.metadata.Metadata;
@@ -50,13 +34,16 @@ public class BinaryParseData implements ParseData {
   private static final String DEFAULT_ENCODING = "UTF-8";	// 默认编码utf-8
   private static final String DEFAULT_OUTPUT_FORMAT = "html";	//默认输出格式html
 
-  // 解析器
+  // Creates an auto-detecting parser instance using the default Tika configuration.
   private static final Parser AUTO_DETECT_PARSER = new AutoDetectParser();
   private static final SAXTransformerFactory SAX_TRANSFORMER_FACTORY = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
 
+  // Parse context. Used to pass context information to Tika parsers.
   private final ParseContext context = new ParseContext();
   // 页面的所有外链
   private Set<WebURL> outgoingUrls = new HashSet<>();
+  
+  // 从二进制数据中得到的html内容
   private String html = null;
 
   public BinaryParseData() {
@@ -90,8 +77,9 @@ public class BinaryParseData implements ParseData {
 
     TransformerHandler transformerHandler = SAX_TRANSFORMER_FACTORY.newTransformerHandler();
     Transformer transformer = transformerHandler.getTransformer();
-    transformer.setOutputProperty(OutputKeys.METHOD, method);
-    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+    transformer.setOutputProperty(OutputKeys.METHOD, method); // html
+    //  the Transformer may add additional whitespace when outputting the result tree;
+    transformer.setOutputProperty(OutputKeys.INDENT, "yes");  
 
     if (encoding != null) {
       transformer.setOutputProperty(OutputKeys.ENCODING, encoding);

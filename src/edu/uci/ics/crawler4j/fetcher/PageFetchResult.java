@@ -1,20 +1,3 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package edu.uci.ics.crawler4j.fetcher;
 
 import java.io.EOFException;
@@ -31,14 +14,15 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Yasser Ganjisaffar [lastname at gmail dot com]
  */
+// 使用httpclient包fetch page之后存储的结果
 public class PageFetchResult {
 
   protected static final Logger logger = LoggerFactory.getLogger(PageFetchResult.class);
 
-  protected int statusCode;
-  protected HttpEntity entity = null;
-  protected Header[] responseHeaders = null;
-  protected String fetchedUrl = null;
+  protected int statusCode;		// 状态码
+  protected HttpEntity entity = null;	// httpEntity对象
+  protected Header[] responseHeaders = null;	// 响应消息头
+  protected String fetchedUrl = null;	// url链接
   protected String movedToUrl = null;
 
   public int getStatusCode() {
@@ -75,6 +59,7 @@ public class PageFetchResult {
 
   public boolean fetchContent(Page page) {
     try {
+      // 将fetch后的结果解析转换成page对象	
       page.load(entity);
       page.setFetchResponseHeaders(responseHeaders);
       return true;
@@ -84,6 +69,7 @@ public class PageFetchResult {
     return false;
   }
 
+  // 忽略content，不进行处理
   public void discardContentIfNotConsumed() {
     try {
       if (entity != null) {

@@ -1,20 +1,3 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package edu.uci.ics.crawler4j.fetcher;
 
 import java.io.IOException;
@@ -26,7 +9,9 @@ import java.util.List;
 
 import javax.net.ssl.SSLContext;
 
-import edu.uci.ics.crawler4j.crawler.*;
+import edu.uci.ics.crawler4j.crawler.Configurable;
+import edu.uci.ics.crawler4j.crawler.CrawlConfig;
+//import edu.uci.ics.crawler4j.crawler.*;
 import edu.uci.ics.crawler4j.crawler.authentication.AuthInfo;
 import edu.uci.ics.crawler4j.crawler.authentication.BasicAuthInfo;
 import edu.uci.ics.crawler4j.crawler.authentication.FormAuthInfo;
@@ -64,7 +49,9 @@ public class PageFetcher extends Configurable {
 
   protected static final Logger logger = LoggerFactory.getLogger(PageFetcher.class);
 
+  // HttpClient连接池
   protected PoolingHttpClientConnectionManager connectionManager;
+  // httpClient对象
   protected CloseableHttpClient httpClient;
   protected final Object mutex = new Object();
   protected long lastFetchTime = 0;
@@ -76,9 +63,9 @@ public class PageFetcher extends Configurable {
     RequestConfig requestConfig = RequestConfig.custom()
         .setExpectContinueEnabled(false)
         .setCookieSpec(CookieSpecs.BROWSER_COMPATIBILITY)
-        .setRedirectsEnabled(false)
-        .setSocketTimeout(config.getSocketTimeout())
-        .setConnectTimeout(config.getConnectionTimeout())
+        .setRedirectsEnabled(false)		// 不允许redirect
+        .setSocketTimeout(config.getSocketTimeout())	// socket超时
+        .setConnectTimeout(config.getConnectionTimeout())	// connection超时
         .build();
 
     RegistryBuilder<ConnectionSocketFactory> connRegistryBuilder = RegistryBuilder.create();
@@ -104,14 +91,15 @@ public class PageFetcher extends Configurable {
 
     Registry<ConnectionSocketFactory> connRegistry = connRegistryBuilder.build();
     connectionManager = new PoolingHttpClientConnectionManager(connRegistry);
-    connectionManager.setMaxTotal(config.getMaxTotalConnections());
-    connectionManager.setDefaultMaxPerRoute(config.getMaxConnectionsPerHost());
+    connectionManager.setMaxTotal(config.getMaxTotalConnections()); // 最大连接数
+    connectionManager.setDefaultMaxPerRoute(config.getMaxConnectionsPerHost()); // 每个route的最大连接
 
     HttpClientBuilder clientBuilder = HttpClientBuilder.create();
     clientBuilder.setDefaultRequestConfig(requestConfig);
     clientBuilder.setConnectionManager(connectionManager);
     clientBuilder.setUserAgent(config.getUserAgentString());
 
+    // 设置代理
     if (config.getProxyHost() != null) {
       if (config.getProxyUsername() != null) {
         BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
