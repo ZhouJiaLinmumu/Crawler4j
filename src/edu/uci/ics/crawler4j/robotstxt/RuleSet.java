@@ -1,38 +1,26 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package edu.uci.ics.crawler4j.robotstxt;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+// RuleSet类根据robot.txt来定义爬虫爬取url时的rule
 public class RuleSet extends TreeSet<String> {
 
   private static final long serialVersionUID = 1L;
 
   @Override
   public boolean add(String str) {
+	// 返回所有小于str的String集合
     SortedSet<String> sub = headSet(str);
+    // 例如如果已经加入了http://www.baidu.com/image，则不用加入http://www.baidu.con/image/1.jpg
     if (!sub.isEmpty() && str.startsWith(sub.last())) {
       // no need to add; prefix is already present
       return false;
     }
     boolean retVal = super.add(str);
+    // 返回所有大于等于str+'\0'的String的集合
     sub = tailSet(str + "\0");
+    // 去掉冗余的规则，例如如果加入的是http://www.baidu.com/image，则需要去掉http://www.baidu.com/image/1.jpg
     while (!sub.isEmpty() && sub.first().startsWith(str)) {
       // remove redundant entries
       sub.remove(sub.first());
@@ -40,11 +28,12 @@ public class RuleSet extends TreeSet<String> {
     return retVal;
   }
 
+  // 是否包含s作为前缀的规则
   public boolean containsPrefixOf(String s) {
     SortedSet<String> sub = headSet(s);
     // because redundant prefixes have been eliminated,
     // only a test against last item in headSet is necessary
-    if (!sub.isEmpty() && s.startsWith(sub.last())) {
+    if (!sub.isEmpty() && s.startsWith(sub.last())) {	// 如果包含有大的规则，则等价于当前规则已经包含
       return true; // prefix substring exists
     }
     // might still exist exactly (headSet does not contain boundary)

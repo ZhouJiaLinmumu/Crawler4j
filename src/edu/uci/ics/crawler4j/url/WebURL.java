@@ -1,20 +1,3 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package edu.uci.ics.crawler4j.url;
 
 import java.io.Serializable;
@@ -22,28 +5,24 @@ import java.io.Serializable;
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
 
-/**
- * @author Yasser Ganjisaffar [lastname at gmail dot com]
- */
-
 @Entity	// Berkley DB Annotation
 public class WebURL implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   @PrimaryKey
-  private String url;
+  private String url;		// 当前页面的url
 
-  private int docid;
-  private int parentDocid;
-  private String parentUrl;
-  private short depth;
-  private String domain;
-  private String subDomain;
-  private String path;
-  private String anchor;
-  private byte priority;
-  private String tag;
+  private int docid;		// 为当前网页分配的一个docId
+  private int parentDocid;	// 在网页a的页面上找到指向b的链接，则a是b的parentDocid
+  private String parentUrl;	// 在网页a的页面上找到指向b的链接，则a是b的parentUrl
+  private short depth;		// 爬取深度， 从0开始计数
+  private String domain;	// 当前网页的主域名
+  private String subDomain;	// 当前网页的子域名
+  private String path;		// 当前网页在网站中的资源路径
+  private String anchor;	// 超链接标签中的文本
+  private byte priority;	// 爬取的优先级，越低代表优先级越高
+  private String tag;		// 标签
 
 
   /**
@@ -67,20 +46,27 @@ public class WebURL implements Serializable {
   public void setURL(String url) {
     this.url = url;
 
-    int domainStartIdx = url.indexOf("//") + 2;	// "http://"
-    int domainEndIdx = url.indexOf('/', domainStartIdx);	// ”http://www.baidu.com/“
-        domainEndIdx = domainEndIdx > domainStartIdx ? domainEndIdx : url.length();
+    // 从"http://"开始作为domain的起点
+    int domainStartIdx = url.indexOf("//") + 2;	
+    // 第一个斜杠作为domain的终点，例如”http://www.baidu.com/“
+    int domainEndIdx = url.indexOf('/', domainStartIdx);
+    // 有点没有斜杠，如http://www.baidu.com
+    domainEndIdx = domainEndIdx > domainStartIdx ? domainEndIdx : url.length();
     domain = url.substring(domainStartIdx, domainEndIdx);
     subDomain = "";
-    String[] parts = domain.split("\\.");	//根据‘.’点，进行拆分
+    //根据点进行拆分
+    String[] parts = domain.split("\\.");	
     if (parts.length > 2) {
+      // 默认的domain包含两个字段，如www.baidu.com中的baidu.com
       domain = parts[parts.length - 2] + "." + parts[parts.length - 1];
       int limit = 2;
+      // 有的包含3个字段，如www.sina.com.cn中的sina.com.cn
       if (TLDList.getInstance().contains(domain)) {
         domain = parts[parts.length - 3] + "." + domain;
         limit = 3;
       }
       for (int i = 0; i < parts.length - limit; i++) {
+    	// 加上分隔符
         if (subDomain.length() > 0) {
           subDomain += ".";
         }
@@ -88,6 +74,7 @@ public class WebURL implements Serializable {
       }
     }
     path = url.substring(domainEndIdx);
+    // 如果url中带有参数（即含有?），则?之后的不是path
     int pathEndIdx = path.indexOf('?');
     if (pathEndIdx >= 0) {
       path = path.substring(0, pathEndIdx);
@@ -182,7 +169,7 @@ public class WebURL implements Serializable {
   }
 
   /**
-   * @return tag in which this URL is found
+   * @return tag in which this URL is found, like 'a' , 'href' ,····
    * */
   public String getTag() {
     return tag;

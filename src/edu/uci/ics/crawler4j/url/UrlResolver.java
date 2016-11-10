@@ -1,34 +1,90 @@
-/**
- * This class is adopted from Htmlunit with the following copyright:
- * 
- * Copyright (c) 2002-2012 Gargoyle Software Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package edu.uci.ics.crawler4j.url;
 
-
+// 将相对地址转化为绝对地址（具体内容参考文档http://www.faqs.org/rfcs/rfc1808.html）
 public final class UrlResolver {
+	
+	/**
+	   * Class <tt>Url</tt> represents a Uniform Resource Locator.
+	   *
+	   * @author Martin Tamme
+	   */
+	  // 一般的超链接格式  <scheme>://<net_loc>/<path>;<params>?<query>#<fragment>
+	  private static class Url {
+
+	    String scheme_;
+	    String location_;
+	    String path_;
+	    String parameters_;
+	    String query_;
+	    String fragment_;
+
+	    /**
+	     * Creates a <tt>Url</tt> object.
+	     */
+	    public Url() {
+	    }
+
+	    /**
+	     * Creates a <tt>Url</tt> object from the specified
+	     * <tt>Url</tt> object.
+	     *
+	     * @param url a <tt>Url</tt> object.
+	     */
+	    public Url(final Url url) {
+	      scheme_ = url.scheme_;
+	      location_ = url.location_;
+	      path_ = url.path_;
+	      parameters_ = url.parameters_;
+	      query_ = url.query_;
+	      fragment_ = url.fragment_;
+	    }
+
+	    /**
+	     * Returns a string representation of the <tt>Url</tt> object.
+	     *
+	     * @return a string representation of the <tt>Url</tt> object.
+	     */
+	    @Override
+	    public String toString() {
+	      final StringBuilder sb = new StringBuilder();
+
+	      if (scheme_ != null) {
+	        sb.append(scheme_);
+	        sb.append(':');
+	      }
+	      if (location_ != null) {
+	        sb.append("//");
+	        sb.append(location_);
+	      }
+	      if (path_ != null) {
+	        sb.append(path_);
+	      }
+	      if (parameters_ != null) {
+	        sb.append(';');
+	        sb.append(parameters_);
+	      }
+	      if (query_ != null) {
+	        sb.append('?');
+	        sb.append(query_);
+	      }
+	      if (fragment_ != null) {
+	        sb.append('#');
+	        sb.append(fragment_);
+	      }
+	      return sb.toString();
+	    }
+	  }
 
   /**
    * Resolves a given relative URL against a base URL. See
-   * <a href="http://www.faqs.org/rfcs/rfc1808.html">RFC1808</a>
+   * <a href="http://www.faqs.org/rfcs/rfc1808.html">RFC1808</a>（具体内容请看这）
    * Section 4 for more details.
    *
    * @param baseUrl     The base URL in which to resolve the specification.
    * @param relativeUrl The relative URL to resolve against the base URL.
    * @return the resolved specification.
    */
+	// 调用算法，将相对地址根据其所在页面的上下文（主要是所在页面的绝对地址），转化成等价的绝对地址
   public static String resolveUrl(final String baseUrl, final String relativeUrl) {
     if (baseUrl == null) {
       throw new IllegalArgumentException("Base URL must not be null");
@@ -37,7 +93,7 @@ public final class UrlResolver {
     if (relativeUrl == null) {
       throw new IllegalArgumentException("Relative URL must not be null");
     }
-
+    // 调用算法，将相对地址根据其所在页面的上下文（主要是所在页面的绝对地址），转化成等价的绝对地址
     final Url url = resolveUrl(parseUrl(baseUrl.trim()), relativeUrl.trim());
     return url.toString();
   }
@@ -52,6 +108,7 @@ public final class UrlResolver {
    * @param endIndex the index at which to stop the search
    * @return the index of the first occurrence of the character in the string or <tt>-1</tt>
    */
+  // 从beginIndex开始，到endIndex结束中，字符串s中第一个为searchChar的字符的位置
   private static int indexOf(final String s, final char searchChar, final int beginIndex, final int endIndex) {
     for (int i = beginIndex; i < endIndex; i++) {
       if (s.charAt(i) == searchChar) {
@@ -79,6 +136,7 @@ public final class UrlResolver {
    * @param spec The specification to parse.
    * @return the parsed specification.
    */
+  // 将一个字符串格式的链接，变为标准格式  <scheme>://<net_loc>/<path>;<params>?<query>#<fragment>
   private static Url parseUrl(final String spec) {
     final Url url = new Url();
     int startIndex = 0;
@@ -99,7 +157,7 @@ public final class UrlResolver {
     //   to recognize and set aside fragment identifiers as part of the
     //   process.
     final int crosshatchIndex = indexOf(spec, '#', startIndex, endIndex);
-
+    // 如果字符串中包含井号，则井号之后的都是fragment
     if (crosshatchIndex >= 0) {
       url.fragment_ = spec.substring(crosshatchIndex + 1, endIndex);
       endIndex = crosshatchIndex;
@@ -113,12 +171,12 @@ public final class UrlResolver {
     //   including the first colon. These characters and the colon are then
     //   removed from the parse string before continuing.
     final int colonIndex = indexOf(spec, ':', startIndex, endIndex);
-
+    // 如果字符串中包含冒号，则冒号之前的都是scheme
     if (colonIndex > 0) {
       final String scheme = spec.substring(startIndex, colonIndex);
-      if (isValidScheme(scheme)) {
+      if (isValidScheme(scheme)) {	// 是否为符合文档要求的scheme
         url.scheme_ = scheme;
-        startIndex = colonIndex + 1;
+        startIndex = colonIndex + 1;  	// 起始点变为冒号之后的位置
       }
     }
     // Section 2.4.3: Parsing the Network Location/Login
@@ -135,13 +193,14 @@ public final class UrlResolver {
     //       delimiters for the network location/login (<net_loc>) of the URL.
     final int locationStartIndex;
     int locationEndIndex;
-
+    // 如果以"//"开始，则之后直到"/"（不包括/）的字符，就是network location
     if (spec.startsWith("//", startIndex)) {
       locationStartIndex = startIndex + 2;
       locationEndIndex = indexOf(spec, '/', locationStartIndex, endIndex);
       if (locationEndIndex >= 0) {
         startIndex = locationEndIndex;
       }
+      // 如果不包含"/"，之后所有的字符都被看做是network location， 如http://www.baidu.com
     }
     else {
       locationStartIndex = -1;
@@ -157,7 +216,7 @@ public final class UrlResolver {
     //   question mark character, is removed from the parse string before
     //   continuing.
     final int questionMarkIndex = indexOf(spec, '?', startIndex, endIndex);
-
+    
     if (questionMarkIndex >= 0) {
       if ((locationStartIndex >= 0) && (locationEndIndex < 0)) {
         // The substring of characters after the double-slash and up to, but not
@@ -258,6 +317,7 @@ public final class UrlResolver {
     //         Section 3.  If the base URL is the empty string (unknown),
     //         the embedded URL is interpreted as an absolute URL and
     //         we are done.
+    // 没有baseUrl，则relativeUrl作为绝对地址
     if (baseUrl == null) {
       return url;
     }
@@ -266,6 +326,7 @@ public final class UrlResolver {
     //      a) If the embedded URL is entirely empty, it inherits the
     //         entire base URL (i.e., is set equal to the base URL)
     //         and we are done.
+    // 相对地址为空，则baseUrl作为其绝对地址
     if (relativeUrl.length() == 0) {
       return new Url(baseUrl);
     }
@@ -388,76 +449,5 @@ public final class UrlResolver {
     }
 
     return path;
-  }
-
-  /**
-   * Class <tt>Url</tt> represents a Uniform Resource Locator.
-   *
-   * @author Martin Tamme
-   */
-  private static class Url {
-
-    String scheme_;
-    String location_;
-    String path_;
-    String parameters_;
-    String query_;
-    String fragment_;
-
-    /**
-     * Creates a <tt>Url</tt> object.
-     */
-    public Url() {
-    }
-
-    /**
-     * Creates a <tt>Url</tt> object from the specified
-     * <tt>Url</tt> object.
-     *
-     * @param url a <tt>Url</tt> object.
-     */
-    public Url(final Url url) {
-      scheme_ = url.scheme_;
-      location_ = url.location_;
-      path_ = url.path_;
-      parameters_ = url.parameters_;
-      query_ = url.query_;
-      fragment_ = url.fragment_;
-    }
-
-    /**
-     * Returns a string representation of the <tt>Url</tt> object.
-     *
-     * @return a string representation of the <tt>Url</tt> object.
-     */
-    @Override
-    public String toString() {
-      final StringBuilder sb = new StringBuilder();
-
-      if (scheme_ != null) {
-        sb.append(scheme_);
-        sb.append(':');
-      }
-      if (location_ != null) {
-        sb.append("//");
-        sb.append(location_);
-      }
-      if (path_ != null) {
-        sb.append(path_);
-      }
-      if (parameters_ != null) {
-        sb.append(';');
-        sb.append(parameters_);
-      }
-      if (query_ != null) {
-        sb.append('?');
-        sb.append(query_);
-      }
-      if (fragment_ != null) {
-        sb.append('#');
-        sb.append(fragment_);
-      }
-      return sb.toString();
-    }
   }
 }

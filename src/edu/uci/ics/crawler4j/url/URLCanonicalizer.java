@@ -1,20 +1,3 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package edu.uci.ics.crawler4j.url;
 
 import java.net.MalformedURLException;
@@ -28,12 +11,14 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+
 /**
- * See http://en.wikipedia.org/wiki/URL_normalization for a reference Note: some
+ * See http://en.wikipedia.org/wiki/URL_normalization（具体文档） for a reference Note: some
  * parts of the code are adapted from: http://stackoverflow.com/a/4057470/405418
  * 
  * @author Yasser Ganjisaffar [lastname at gmail dot com]
  */
+//有些url其实是等价的，网络爬虫为了判断某个网页是否反复爬取，需要对其进行canonicalizer(规范化)表示
 public class URLCanonicalizer {
 
   public static String getCanonicalURL(String url) {
@@ -43,6 +28,7 @@ public class URLCanonicalizer {
   public static String getCanonicalURL(String href, String context) {
 
     try {
+      //得到标准格式的字符串形式的绝对路径
       URL canonicalURL = new URL(UrlResolver.resolveUrl(context == null ? "" : context, href));
 
       String host = canonicalURL.getHost().toLowerCase();
@@ -59,7 +45,7 @@ public class URLCanonicalizer {
        * not equal to "..".
        */
       path = new URI(path.replace("\\", "/")).normalize().toString();
-
+      
       int idx = path.indexOf("//");
       while (idx >= 0) {
         path = path.replace("//", "/");
@@ -71,7 +57,8 @@ public class URLCanonicalizer {
       }
 
       path = path.trim();
-
+      
+      // 规范化的参数兼职对
       final SortedMap<String, String> params = createParameterMap(canonicalURL.getQuery());
       final String queryString;
       if (params != null && params.size() > 0) {
@@ -112,7 +99,7 @@ public class URLCanonicalizer {
     if (queryString == null || queryString.isEmpty()) {
       return null;
     }
-
+    // 按&切分出所有的参数键值对
     final String[] pairs = queryString.split("&");
     final Map<String, String> params = new HashMap<>(pairs.length);
 
@@ -120,7 +107,8 @@ public class URLCanonicalizer {
       if (pair.length() == 0) {
         continue;
       }
-
+      
+      // 得到所有的key和value
       String[] tokens = pair.split("=", 2);
       switch (tokens.length) {
       case 1:
@@ -152,6 +140,7 @@ public class URLCanonicalizer {
 
     final StringBuffer sb = new StringBuffer(100);
     for (Map.Entry<String, String> pair : sortedParamMap.entrySet()) {
+      // 对session不进行规范化	
       final String key = pair.getKey().toLowerCase();
       if (key.equals("jsessionid") || key.equals("phpsessid") || key.equals("aspsessionid")) {
         continue;

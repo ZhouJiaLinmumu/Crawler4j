@@ -10,9 +10,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * This class is a singleton which obtains a list of TLDs (from online or a local file) in order to compare against those TLDs
- * */
+// 从网络或本地文件中获取顶级域名的列表
 public class TLDList {
 
   private final static String TLD_NAMES_ONLINE_URL = "https://publicsuffix.org/list/effective_tld_names.dat";
@@ -26,10 +24,12 @@ public class TLDList {
   private TLDList() {
     try {
       URL url = new URL(TLD_NAMES_ONLINE_URL);
+      // 从网络上获取TLD域名列表文件
       try (InputStream stream = url.openStream(); BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
         logger.debug("Fetching the most updated TLD list online");
-
+        
         String line;
+        // 依次读取所欲的域名
         while ((line = reader.readLine()) != null) {
           line = line.trim();
           if (line.isEmpty() || line.startsWith("//")) {
@@ -44,6 +44,7 @@ public class TLDList {
       logger.warn("Couldn't fetch the online list of TLDs from: {}", TLD_NAMES_ONLINE_URL);
       logger.info("Fetching the list from my local file {}", TLD_NAMES_TXT_FILENAME);
 
+      // 从本地文件中读取TLD列表
       try (InputStream stream = this.getClass().getResourceAsStream(TLD_NAMES_TXT_FILENAME);
            BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
 
@@ -67,6 +68,7 @@ public class TLDList {
     return instance;
   }
 
+  // 判断某个域名是否包含在顶级域名中
   public boolean contains(String str) {
     return tldSet.contains(str);
   }
